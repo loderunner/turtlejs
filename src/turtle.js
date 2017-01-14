@@ -22,11 +22,6 @@ function TurtleRenderer(element) {
     // Create layers
     this._backgroundLayer = this._canvasElement.cloneNode();
     this._foregroundLayer = this._canvasElement.cloneNode();
-
-    // Load turtle image
-    this._turtleImage = new Image();
-    this._turtleImage.src = '../img/turtle.png';
-    this._turtleImage.onload = function() {};
 }
 
 /**
@@ -37,7 +32,10 @@ Object.defineProperty(TurtleRenderer.prototype, 'canvasElement', {
     get: function() { return this._canvasElement; }
 });
 
-TurtleRenderer.prototype.render = function() {
+/**
+ * renders the turtle context
+ */
+TurtleRenderer.prototype.render = function(turtle) {
     const ctx = this._canvas.getContext('bitmaprenderer');
 
     const bgCtx = this._backgroundLayer.getContext('2d', {alpha:'true'});
@@ -53,12 +51,16 @@ function Turtle() {
     this._x = 0;
     this._y = 0;
     this._orientation = 0;
+    this._turtleImage = Turtle.defaultTurtleImage;
 }
 
 Object.defineProperty(Turtle.prototype, 'renderer', {
     get: function() { return this._renderer; },
     set: function(r) { this._renderer = r; }
 });
+
+Turtle.defaultTurtleImage = new Image();
+Turtle.defaultTurtleImage.src = '../img/turtle.png';
 
 Turtle.makeTurtle = function(element) {
     let turtle = new Turtle();
