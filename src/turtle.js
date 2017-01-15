@@ -1,29 +1,14 @@
 const defaultTurtleImageData = 
-    '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';
+    'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAACFElEQVRo3u3XTUhUURjG8b96dXJqyKlU' +
+    'LIcpLaKvYYohSpBsY4MgVtAQhLRQKAwThspclAvLiaywKLJoRmrRIoQ+kKLCoqAvUMKgSIsRk4IYCGEg' +
+    'KHPeFrdNIGFePXdzzrM5HO7l/Bbn3Pe9CPYGDdAADdAADdAADdAADdAAi6874wNDrX0rSGOqwyLAG5F5' +
+    'UiM3Pg4f7V8yJYZFgC/yZ5ov+1K33n0++HzRfzIsAvyRvxY8Ek51vx7Zfz9v0ozpBZgplqbxhy9Harvd' +
+    'k2DMBMDMKmkee/J4uPq265+M6QGYY6JH1snxHy/uxUNnsm0CIEialEjb996b8cp6hy0AMxmyWc4l+69/' +
+    'KC8zbAGYyZSgXBx9GxsoJd0WgBmHbJMricHz7wO2AaqkI9nTdW2LcoAhQWn/eWlwaxeHqMCrEJAuZXJq' +
+    'LDoUumO0UEs5qynAqegabpQTv2Kfdt/NamUPQXwsZI6iQ+iXlvHOL3sfzD5JHRX4KcRFhpJP8Uo5kur8' +
+    '2vAo5zT1VLIWDy4MJbWgSBpTscThp7ntNFBFAC9zJ9h6JgCFEpbot+ZnnguE2c56FpODoaAYIflSJ9HR' +
+    'Y6+KOzjADjZQhJtMJeXYLTVyOdnWtyZKIzspYSnzyVLVkPh6E2ffBK7SxC5KWcYCHGpbMi8hqtnEcnKZ' +
+    'ZUdT6qSAPLJta8v1n5EGaIAGaIAGaIAGaID1/AZnyrNXSqkX6AAAAABJRU5ErkJggg==';
 
 
 /**
@@ -41,7 +26,7 @@ function TurtleRenderer(element) {
         }
     }
     if (!(el instanceof HTMLCanvasElement)) {
-        throw new TypeError("#" + String(element) + " is not a HTMLCanvasElement");
+        throw new TypeError("#" + String(element) + " is not a string or HTMLCanvasElement");
     }
 
     // Set drawing canvas
