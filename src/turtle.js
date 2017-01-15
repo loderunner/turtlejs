@@ -29,22 +29,42 @@ Object.defineProperty(TurtleRenderer.prototype, 'canvasElement', {
     get: function() { return this._canvasElement; }
 });
 
+/**
+ * Returns the context to draw the background on. This context is not directly linked to
+ * an on-screen canvas. Use [render]{@link TurtleRenderer.prototype.render} to render
+ * to the document's canvas.
+ * @return {CanvasRenderingContext2D} the context to draw the background on.
+ */
 TurtleRenderer.prototype.getBackgroundContext() {
-    return this._backgroundLayer.getContext('2d', {alpha:'true'});
+    return this._backgroundLayer.getContext('2d', {alpha:'false'});
 }
 
+/**
+ * Returns the context to draw the foreground on. This context is not directly linked to
+ * an on-screen canvas. Use [render]{@link TurtleRenderer.prototype.render} to render
+ * to the document's canvas.
+ * @return {CanvasRenderingContext2D} the context to draw the foreground on.
+ */
 TurtleRenderer.prototype.getForegroundContext() {
     return this._foregroundLayer.getContext('2d', {alpha:'true'});
 }
 
 /**
- * renders the turtle context
+ * Renders the turtle context
  * @param {Turtle} turtle - The turtle context to render on the canvas.
  */
 TurtleRenderer.prototype.render = function(turtle) {
-    const ctx = this._canvas.getContext('bitmaprenderer');
+    const ctx = this._canvas.getContext('2d', {alpha:'true'});
 
+    // Draw background
     const bgCtx = this.getBackgroundContext();
+    const bgImgData = bgCtx.getImageData();
+    ctx.putImageData(bgImageData);
+
+    // Draw foreground
+    const fgCtx = this.getForegroundContext();
+    const fgImgData = fgCtx.getImageData();
+    ctx.putImageData(fgImageData);
 }
 
 
@@ -76,6 +96,7 @@ Object.defineProperty(Turtle.prototype, 'renderer', {
  * @param {Number} y - the y coordinate of the target position
  */
  Turtle.prototype.moveTo = function(x, y) {
+
 
     this.x = x;
     this.y = y;
