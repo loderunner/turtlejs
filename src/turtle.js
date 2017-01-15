@@ -56,12 +56,12 @@ TurtleRenderer.prototype.getForegroundContext() {
 TurtleRenderer.prototype.render = function(turtle) {
     const ctx = this._canvas.getContext('2d', {alpha:'true'});
 
-    // Draw background
+    // Draw background layer
     const bgCtx = this.getBackgroundContext();
     const bgImgData = bgCtx.getImageData();
     ctx.putImageData(bgImageData);
 
-    // Draw foreground
+    // Draw foreground layer
     const fgCtx = this.getForegroundContext();
     const fgImgData = fgCtx.getImageData();
     ctx.putImageData(fgImageData);
@@ -88,6 +88,22 @@ function Turtle() {
 Object.defineProperty(Turtle.prototype, 'renderer', {
     get: function() { return this._renderer; },
     set: function(r) { this._renderer = r; this._renderer.render(); }
+});
+Object.defineProperty(Turtle.prototype, 'x', {
+    get: function() { return this._x; },
+    set: function(x) { this._x = x; }
+});
+Object.defineProperty(Turtle.prototype, 'y', {
+    get: function() { return this._y; },
+    set: function(y) { this._y = y; }
+});
+Object.defineProperty(Turtle.prototype, 'orientation', {
+    get: function() { return this._orientation; },
+    set: function(o) { this._orientation = o; }
+});
+Object.defineProperty(Turtle.prototype, 'turtleImage', {
+    get: function() { return this._turtleImage; },
+    set: function(i) { this._turtleImage = i; }
 });
 
 /**
