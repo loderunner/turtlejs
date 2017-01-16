@@ -1,14 +1,8 @@
 const defaultTurtleImageData = 
-    'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAACFElEQVRo3u3XTUhUURjG8b96dXJqyKlU' +
-    'LIcpLaKvYYohSpBsY4MgVtAQhLRQKAwThspclAvLiaywKLJoRmrRIoQ+kKLCoqAvUMKgSIsRk4IYCGEg' +
-    'KHPeFrdNIGFePXdzzrM5HO7l/Bbn3Pe9CPYGDdAADdAADdAADdAADdAAi6874wNDrX0rSGOqwyLAG5F5' +
-    'UiM3Pg4f7V8yJYZFgC/yZ5ov+1K33n0++HzRfzIsAvyRvxY8Ek51vx7Zfz9v0ozpBZgplqbxhy9Harvd' +
-    'k2DMBMDMKmkee/J4uPq265+M6QGYY6JH1snxHy/uxUNnsm0CIEialEjb996b8cp6hy0AMxmyWc4l+69/' +
-    'KC8zbAGYyZSgXBx9GxsoJd0WgBmHbJMricHz7wO2AaqkI9nTdW2LcoAhQWn/eWlwaxeHqMCrEJAuZXJq' +
-    'LDoUumO0UEs5qynAqegabpQTv2Kfdt/NamUPQXwsZI6iQ+iXlvHOL3sfzD5JHRX4KcRFhpJP8Uo5kur8' +
-    '2vAo5zT1VLIWDy4MJbWgSBpTscThp7ntNFBFAC9zJ9h6JgCFEpbot+ZnnguE2c56FpODoaAYIflSJ9HR' +
-    'Y6+KOzjADjZQhJtMJeXYLTVyOdnWtyZKIzspYSnzyVLVkPh6E2ffBK7SxC5KWcYCHGpbMi8hqtnEcnKZ' +
-    'ZUdT6qSAPLJta8v1n5EGaIAGaIAGaIAGaID1/AZnyrNXSqkX6AAAAABJRU5ErkJggg==';
+    'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAQAAADZc7J/AAAAjklEQVRIx2P4z0AZZBg1YNQAuhjQ82ze' +
+    '7B/qDLgBIQNsgITc/7QXy/r/y5NtAASq/s95tK71vwTZBkCg7r+iu9sr/wuRbQAEmv6ruLo//z8v2QaA' +
+    'IMv/0m/v48g0wORf2TUyXaD9r/DuVvLCQPV/9qO1bWTFgiwwHSyeQGY66H42dw5FKXE0O48aMDQMAABL' +
+    '48DaqA6zBwAAAABJRU5ErkJggg==';
 
 
 /**
@@ -31,10 +25,18 @@ function TurtleRenderer(element) {
 
     // Set drawing canvas
     this._canvasElement = el;
+    const width = this._canvasElement.width;
+    const height = this._canvasElement.height;
 
     // Create layers
-    this._backgroundLayer = this._canvasElement.cloneNode();
-    this._foregroundLayer = this._canvasElement.cloneNode();
+    this._backgroundLayer = document.createElement('canvas');
+    this._backgroundLayer.width = width;
+    this._backgroundLayer.height = height;
+
+    this._foregroundLayer = document.createElement('canvas');
+    this._foregroundLayer.width = width;
+    this._foregroundLayer.height = height;
+    this.getForegroundContext().transform(1, 0, 0, -1, width/2, height/2);
 }
 
 Object.defineProperty(TurtleRenderer.prototype, 'canvasElement', {
@@ -70,8 +72,6 @@ TurtleRenderer.prototype.render = function(turtle) {
     const width = this._canvasElement.width;
     const height = this._canvasElement.height;
 
-    ctx.save();
-
     // Draw background layer
     {
         const bgCtx = this.getBackgroundContext();
@@ -89,7 +89,6 @@ TurtleRenderer.prototype.render = function(turtle) {
         const fgCtx = this.getForegroundContext();
 
         // flip y axis and center origin
-        fgCtx.transform(1, 0, 0, -1, width/2, height/2);
         const fgImgData = fgCtx.getImageData(
             0,
             0, 
@@ -99,7 +98,17 @@ TurtleRenderer.prototype.render = function(turtle) {
         ctx.putImageData(fgImgData, 0, 0);
     }
 
-    ctx.restore();
+    // Draw turtle
+    {
+        const img = turtle.turtleImage;
+
+        ctx.save();
+        ctx.transform(1, 0, 0, -1, width/2, height/2);
+        ctx.translate(turtle.x - img.naturalWidth/2, turtle.y - img.naturalHeight/2);
+        ctx.rotate(turtle.orientation);
+        ctx.drawImage(img, 0, 0);
+        ctx.restore();
+    }
 }
 
 TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
@@ -139,6 +148,7 @@ Object.defineProperty(Turtle.prototype, 'orientation', {
     get: function() { return this._orientation; }
 });
 Object.defineProperty(Turtle.prototype, 'turtleImage', {
+    get: function() { return this._turtleImage; },
     set: function(i) { this._turtleImage = i; }
 });
 
@@ -150,8 +160,10 @@ Object.defineProperty(Turtle.prototype, 'turtleImage', {
  Turtle.prototype.moveTo = function(x, y) {
 
     if (this._renderer) {
-        this._renderer.drawLine(this._x, this._y, x, y);
-        this._renderer.render(this);
+        const turtle = this;
+        const renderer = this._renderer;
+        renderer.drawLine(this._x, this._y, x, y);
+        requestAnimationFrame(function() { renderer.render(turtle); });
     }
 
     this._x = x;
@@ -179,7 +191,7 @@ Turtle.defaultTurtleImage.src = 'data:image/png;base64,' + defaultTurtleImageDat
 Turtle.makeTurtle = function(element) {
     let turtle = new Turtle();
     turtle._renderer = new TurtleRenderer(element);
-    turtle._renderer.render(turtle);
+    requestAnimationFrame(function() { turtle._renderer.render(turtle); });
 
     return turtle;
 }
