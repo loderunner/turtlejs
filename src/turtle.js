@@ -162,6 +162,13 @@ Object.defineProperty(Turtle.prototype, 'turtleImage', {
 });
 
 /**
+ * The default turtle image.
+ * @type {Image}
+ */
+Turtle.defaultTurtleImage = new Image();
+Turtle.defaultTurtleImage.src = 'data:image/png;base64,' + defaultTurtleImageData;
+
+/**
  * Moves the turtle to an (absolute) position.
  * @param {Number} x - the x coordinate of the target position
  * @param {Number} y - the y coordinate of the target position
@@ -215,12 +222,16 @@ Turtle.prototype.background = function(color) {
     this._backgroundColor = color;
 }
 
-/**
- * The default turtle image.
- * @type {Image}
+/** 
+ * Aliases
  */
-Turtle.defaultTurtleImage = new Image();
-Turtle.defaultTurtleImage.src = 'data:image/png;base64,' + defaultTurtleImageData;
+
+/**
+ * Alias of [forward(distance)]{@linkcode Turtle#forward}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.fd = Turtle.prototype.forward;
 
 /**
  * Creates and returns a turtle drawing context that renders on the given HTMLCanvasElement or id.
@@ -233,16 +244,5 @@ Turtle.makeTurtle = function(element) {
 
     return turtle;
 }
-
-/** 
- * Aliases
- */
-
-/**
- * Alias of [forward(distance)]{@linkcode Turtle#forward}
- * @function Turtle.prototype.fd
- * @param distance
- */
-Turtle.prototype.fd = Turtle.prototype.forward;
 
 window.Turtle = Turtle;

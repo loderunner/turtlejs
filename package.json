@@ -1,0 +1,32 @@
+{
+  "name": "turtlejs",
+  "version": "1.0.0",
+  "description": "A Turtle graphics package for Canvas.",
+  "main": "src/turtle.js",
+  "directories": {
+    "doc": "doc",
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loderunner/turtlejs.git"
+  },
+  "keywords": [
+    "turtle",
+    "graphics",
+    "canvas"
+  ],
+  "author": "\"loderunner (https://github.com/loderunner)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loderunner/turtlejs/issues"
+  },
+  "homepage": "https://github.com/loderunner/turtlejs#readme",
+  "devDependencies": {
+    "ink-docstrap": "^1.3.0",
+    "jsdoc": "^3.4.3"
+  }
+}

@@ -1,0 +1,28 @@
+{
+    "opts": {
+        "template": "./node_modules/ink-docstrap/template",
+        "destination": "doc",
+        "recurse": true
+    },
+    "source": {
+        "include" : [ "src" ]
+    },
+    "plugins": [
+        "plugins/markdown",
+        "plugins/summarize"
+    ],
+    "templates": {
+        "systemName"            : "Turtle.js",
+        "footer"                : "",
+        "copyright"             : "",
+        "includeDate"           : true,
+        "navType"               : "vertical",
+        "theme"                 : "flatly",
+        "linenums"              : false,
+        "collapseSymbols"       : false,
+        "inverseNav"            : false,
+        "outputSourceFiles"     : false,
+        "outputSourcePath"      : false,
+        "sort"                  : false
+    }
+}
