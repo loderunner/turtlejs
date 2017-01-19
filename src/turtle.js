@@ -166,7 +166,7 @@ Object.defineProperty(Turtle.prototype, 'turtleImage', {
  * @param {Number} x - the x coordinate of the target position
  * @param {Number} y - the y coordinate of the target position
  */
- Turtle.prototype.moveTo = function(x, y) {
+Turtle.prototype.moveTo = function(x, y) {
 
     if (this._renderer) {
         const turtle = this;
@@ -177,12 +177,22 @@ Object.defineProperty(Turtle.prototype, 'turtleImage', {
 
     this._x = x;
     this._y = y;
- }
+}
 
- /**
-  * Sets the background color.
-  * @param {Color} color - the background color
-  */
+/**
+ * Moves the turtle forward in the direction it's headed.
+ * @param {Number} distance - the distance the turtle should move forward
+ */
+Turtle.prototype.forward = function(distance) {
+    const x = distance * Math.cos(this._orientation);
+    const y = distance * Math.sin(this._orientation);
+    this.moveTo(x, y);
+}
+
+/**
+ * Sets the background color.
+ * @param {Color} color - the background color
+ */
 Turtle.prototype.background = function(color) {
 
     if (this._renderer) {
