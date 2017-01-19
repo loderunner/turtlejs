@@ -95,6 +95,13 @@ TurtleRenderer.prototype.render = function(turtle) {
     }
 }
 
+/**
+ * Draw a line between two points.
+ * @param {Number} x0 - The x coordinate of the start point
+ * @param {Number} x0 - The y coordinate of the start point
+ * @param {Number} x1 - The x coordinate of the end point
+ * @param {Number} x1 - The y coordinate of the end point
+ */
 TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
     const ctx = this.getForegroundContext();
 
@@ -104,7 +111,11 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
     ctx.stroke();
 }
 
-TurtleRenderer.prototype.paintBackground = function(color) {
+/**
+ * Fills the background with the given color.
+ * @param {string} color - A string parsed as a CSS color
+ */
+TurtleRenderer.prototype.fillBackground = function(color) {
     const ctx = this.getBackgroundContext();
     const width = this._canvasElement.width;
     const height = this._canvasElement.height;
@@ -177,7 +188,7 @@ Turtle.prototype.background = function(color) {
     if (this._renderer) {
         const turtle = this;
         const renderer = this._renderer;
-        renderer.paintBackground(color);
+        renderer.fillBackground(color);
         requestAnimationFrame(function() { renderer.render(turtle); });
     }
 
