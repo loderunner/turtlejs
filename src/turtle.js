@@ -45,7 +45,7 @@ Object.defineProperty(TurtleRenderer.prototype, 'canvasElement', {
 
 /**
  * Returns the context to draw the background on. This context is not directly linked to
- * an on-screen canvas. Use [render]{@link TurtleRenderer.prototype.render} to render
+ * an on-screen canvas. Use [render]{@linkcode TurtleRenderer#render} to render
  * to the document's canvas.
  * @return {CanvasRenderingContext2D} the context to draw the background on.
  */
@@ -55,7 +55,7 @@ TurtleRenderer.prototype.getBackgroundContext = function() {
 
 /**
  * Returns the context to draw the foreground on. This context is not directly linked to
- * an on-screen canvas. Use [render]{@link TurtleRenderer.prototype.render} to render
+ * an on-screen canvas. Use [render]{@linkcode TurtleRenderer#render} to render
  * to the document's canvas.
  * @return {CanvasRenderingContext2D} the context to draw the foreground on.
  */
@@ -223,5 +223,16 @@ Turtle.makeTurtle = function(element) {
 
     return turtle;
 }
+
+/** 
+ * Aliases
+ */
+
+/**
+ * Alias of [forward(distance)]{@linkcode Turtle#forward}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.fd = Turtle.prototype.forward;
 
 window.Turtle = Turtle;
