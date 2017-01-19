@@ -74,28 +74,12 @@ TurtleRenderer.prototype.render = function(turtle) {
 
     // Draw background layer
     {
-        const bgCtx = this.getBackgroundContext();
-        const bgImgData = bgCtx.getImageData(
-            0, 
-            0,
-            width,
-            height
-        );
-        ctx.putImageData(bgImgData, 0, 0);
+        ctx.drawImage(this._backgroundLayer, 0, 0);
     }
 
     // Draw foreground layer
     {
-        const fgCtx = this.getForegroundContext();
-
-        // flip y axis and center origin
-        const fgImgData = fgCtx.getImageData(
-            0,
-            0, 
-            width,
-            height
-        );
-        ctx.putImageData(fgImgData, 0, 0);
+        ctx.drawImage(this._foregroundLayer, 0, 0);
     }
 
     // Draw turtle
@@ -120,6 +104,15 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
     ctx.stroke();
 }
 
+TurtleRenderer.prototype.paintBackground = function(color) {
+    const ctx = this.getBackgroundContext();
+    const width = this._canvasElement.width;
+    const height = this._canvasElement.height;
+
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, width, height);
+}
+
 
 
 /**
@@ -128,6 +121,7 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
  * @property {Number} x - The current x coordinate of the turtle.
  * @property {Number} y - The current y coordinate of the turtle.
  * @property {Number} orientation - The current angle the turtle is heading.
+ * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
  * @property {Object} turtleImage - (write-only) The image used to represent the turtle. The
  * type can be any type accepted by CanvasRenderingContext2D.drawImage
  */ 
@@ -136,6 +130,7 @@ function Turtle() {
     this._y = 0;
     this._orientation = 0;
     this._turtleImage = Turtle.defaultTurtleImage;
+    this._backgroundColor = "#ffffff";
 }
 
 Object.defineProperty(Turtle.prototype, 'x', {
@@ -146,6 +141,9 @@ Object.defineProperty(Turtle.prototype, 'y', {
 });
 Object.defineProperty(Turtle.prototype, 'orientation', {
     get: function() { return this._orientation; }
+});
+Object.defineProperty(Turtle.prototype, 'backgroundColor', {
+    get: function() { return this._backgroundColor; }
 });
 Object.defineProperty(Turtle.prototype, 'turtleImage', {
     get: function() { return this._turtleImage; },
@@ -175,6 +173,15 @@ Object.defineProperty(Turtle.prototype, 'turtleImage', {
   * @param {Color} color - the background color
   */
 Turtle.prototype.background = function(color) {
+
+    if (this._renderer) {
+        const turtle = this;
+        const renderer = this._renderer;
+        renderer.paintBackground(color);
+        requestAnimationFrame(function() { renderer.render(turtle); });
+    }
+
+    this._backgroundColor = color;
 }
 
 /**
