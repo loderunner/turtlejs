@@ -227,7 +227,7 @@ Turtle.prototype.background = function(color) {
  */
 
 /**
- * Alias of [forward(distance)]{@linkcode Turtle#forward}
+ * Alias of [forward]{@linkcode Turtle#forward}
  * @function Turtle.prototype.fd
  * @param distance
  */
