@@ -184,8 +184,18 @@ Turtle.prototype.moveTo = function(x, y) {
  * @param {Number} distance - the distance the turtle should move forward
  */
 Turtle.prototype.forward = function(distance) {
-    const x = distance * Math.cos(this._orientation);
-    const y = distance * Math.sin(this._orientation);
+    const x = this._x + distance * Math.cos(this._orientation);
+    const y = this._y + distance * Math.sin(this._orientation);
+    this.moveTo(x, y);
+}
+
+/**
+ * Moves the turtle backwards from the direction it's headed. This does not change the turtle's orientation.
+ * @param {Number} distance - the distance the turtle should move backwards
+ */
+Turtle.prototype.forward = function(distance) {
+    const x = this._x - distance * Math.cos(this._orientation);
+    const y = this._y - distance * Math.sin(this._orientation);
     this.moveTo(x, y);
 }
 
