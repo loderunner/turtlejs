@@ -90,7 +90,7 @@ TurtleRenderer.prototype.render = function(turtle) {
         ctx.save();
         ctx.transform(1, 0, 0, -1, width/2, height/2);
         ctx.translate(turtle.x, turtle.y);
-        ctx.rotate(turtle.orientation);
+        ctx.rotate(turtle._orientation);
         ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
         ctx.restore();
     }
@@ -133,6 +133,7 @@ TurtleRenderer.prototype.fillBackground = function(color) {
  * @property {Number} x - The current x coordinate of the turtle.
  * @property {Number} y - The current y coordinate of the turtle.
  * @property {Number} orientation - The current angle the turtle is heading.
+ * @property {boolean} radians - `true` if the orientation units are in radians. Defaults to `false`.
  * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
  * @property {Object} turtleImage - (write-only) The image used to represent the turtle. The
  * type can be any type accepted by CanvasRenderingContext2D.drawImage
@@ -141,6 +142,7 @@ function Turtle() {
     this._x = 0;
     this._y = 0;
     this._orientation = 0;
+    this._radians = false;
     this._turtleImage = Turtle.defaultTurtleImage;
     this._backgroundColor = "#ffffff";
 }
@@ -152,7 +154,17 @@ Object.defineProperty(Turtle.prototype, 'y', {
     get: function() { return this._y; }
 });
 Object.defineProperty(Turtle.prototype, 'orientation', {
-    get: function() { return this._orientation; }
+    get: function() { 
+        if (this._radians) {
+            return this._orientation;
+        } else {
+            return 180 * this._orientation / Math.PI;
+        }
+    }
+});
+Object.defineProperty(Turtle.prototype, 'radians', {
+    get: function() { return this._radians; },
+    set: function(r) { this._radians = r; }
 });
 Object.defineProperty(Turtle.prototype, 'backgroundColor', {
     get: function() { return this._backgroundColor; }
@@ -208,7 +220,11 @@ Turtle.prototype.backward = function(distance) {
 }
 
 Turtle.prototype.right = function(angle) {
-    this._orientation -= angle;
+    if (this._radians) {
+        this._orientation -= angle;
+    } else {
+        this._orientation -= angle * Math.PI / 180;
+    }
 
     if (this._renderer) {
         const turtle = this;
@@ -218,7 +234,11 @@ Turtle.prototype.right = function(angle) {
 }
 
 Turtle.prototype.left = function(angle) {
-    this._orientation += angle;
+    if (this._radians) {
+        this._orientation += angle;
+    } else {
+        this._orientation += angle * Math.PI / 180;
+    }
     
     if (this._renderer) {
         const turtle = this;
