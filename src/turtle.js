@@ -28,11 +28,6 @@ function TurtleRenderer(element) {
     const width = this._canvasElement.width;
     const height = this._canvasElement.height;
 
-    // Create layers
-    this._backgroundLayer = document.createElement('canvas');
-    this._backgroundLayer.width = width;
-    this._backgroundLayer.height = height;
-
     this._foregroundLayer = document.createElement('canvas');
     this._foregroundLayer.width = width;
     this._foregroundLayer.height = height;
@@ -43,16 +38,6 @@ function TurtleRenderer(element) {
 Object.defineProperty(TurtleRenderer.prototype, 'canvasElement', {
     get: function() { return this._canvasElement; }
 });
-
-/**
- * Returns the context to draw the background on. This context is not directly linked to
- * an on-screen canvas. Use [render]{@linkcode TurtleRenderer#render} to render
- * to the document's canvas.
- * @return {CanvasRenderingContext2D} the context to draw the background on.
- */
-TurtleRenderer.prototype.getBackgroundContext = function() {
-    return this._backgroundLayer.getContext('2d', {alpha:'false'});
-}
 
 /**
  * Returns the context to draw the foreground on. This context is not directly linked to
@@ -144,7 +129,7 @@ function Turtle() {
     this._orientation = 0;
     this._radians = false;
     this._turtleImage = Turtle.defaultTurtleImage;
-    this._background = "#ffffff";
+    this._backgroundColor = "#ffffff";
 }
 
 Object.defineProperty(Turtle.prototype, 'x', {
