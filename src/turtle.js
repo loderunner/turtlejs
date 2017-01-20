@@ -64,6 +64,14 @@ TurtleRenderer.prototype.getForegroundContext = function() {
     return this._foregroundLayer.getContext('2d', {alpha:'true'});
 }
 
+TurtleRenderer.prototype.renderIfNeeded = function(turtle) {
+    if (!this._dirty) {
+        this._dirty = true;
+        const self = this;
+        requestAnimationFrame(function() { self.render(turtle); });
+    }
+}
+
 /**
  * Renders the turtle context
  * @param {Turtle} turtle - The turtle context to render on the canvas.
@@ -94,6 +102,8 @@ TurtleRenderer.prototype.render = function(turtle) {
         ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
         ctx.restore();
     }
+
+    this._dirty = false;
 }
 
 /**
@@ -133,7 +143,7 @@ TurtleRenderer.prototype.fillBackground = function(color) {
  * @property {Number} x - The current x coordinate of the turtle.
  * @property {Number} y - The current y coordinate of the turtle.
  * @property {Number} orientation - The current angle the turtle is heading.
- * @property {boolean} radians - `true` if the orientation units are in radians. Defaults to `false`.
+ * @property {boolean} radians - `true` if the orientation units are in radians, in degrees if `false`. Defaults to `false`.
  * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
  * @property {Object} turtleImage - (write-only) The image used to represent the turtle. The
  * type can be any type accepted by CanvasRenderingContext2D.drawImage
@@ -189,10 +199,9 @@ Turtle.defaultTurtleImage.src = 'data:image/png;base64,' + defaultTurtleImageDat
 Turtle.prototype.moveTo = function(x, y) {
 
     if (this._renderer) {
-        const turtle = this;
         const renderer = this._renderer;
         renderer.drawLine(this._x, this._y, x, y);
-        requestAnimationFrame(function() { renderer.render(turtle); });
+        renderer.renderIfNeeded(this);
     }
 
     this._x = x;
@@ -227,9 +236,7 @@ Turtle.prototype.right = function(angle) {
     }
 
     if (this._renderer) {
-        const turtle = this;
-        const renderer = this._renderer;
-        requestAnimationFrame(function() { renderer.render(turtle); });
+        this._renderer.renderIfNeeded(this);
     }
 }
 
@@ -241,9 +248,7 @@ Turtle.prototype.left = function(angle) {
     }
     
     if (this._renderer) {
-        const turtle = this;
-        const renderer = this._renderer;
-        requestAnimationFrame(function() { renderer.render(turtle); });
+        this._renderer.renderIfNeeded(this);
     }
 }
 
@@ -254,10 +259,9 @@ Turtle.prototype.left = function(angle) {
 Turtle.prototype.background = function(color) {
 
     if (this._renderer) {
-        const turtle = this;
         const renderer = this._renderer;
         renderer.fillBackground(color);
-        requestAnimationFrame(function() { renderer.render(turtle); });
+        renderer.renderIfNeeded(this);
     }
 
     this._backgroundColor = color;
@@ -281,7 +285,7 @@ Turtle.prototype.fd = Turtle.prototype.forward;
 Turtle.makeTurtle = function(element) {
     let turtle = new Turtle();
     turtle._renderer = new TurtleRenderer(element);
-    requestAnimationFrame(function() { turtle._renderer.render(turtle); });
+    turtle._renderer.renderIfNeeded(turtle);
 
     return turtle;
 }
