@@ -200,10 +200,30 @@ Turtle.prototype.forward = function(distance) {
  * Moves the turtle backwards from the direction it's headed. This does not change the turtle's orientation.
  * @param {Number} distance - the distance the turtle should move backwards
  */
-Turtle.prototype.forward = function(distance) {
+Turtle.prototype.backward = function(distance) {
     const x = this._x - distance * Math.cos(this._orientation);
     const y = this._y - distance * Math.sin(this._orientation);
     this.moveTo(x, y);
+}
+
+Turtle.prototype.right = function(angle) {
+    this._orientation -= angle;
+
+    if (this._renderer) {
+        const turtle = this;
+        const renderer = this._renderer;
+        requestAnimationFrame(function() { renderer.render(turtle); });
+    }
+}
+
+Turtle.prototype.left = function(angle) {
+    this._orientation += angle;
+    
+    if (this._renderer) {
+        const turtle = this;
+        const renderer = this._renderer;
+        requestAnimationFrame(function() { renderer.render(turtle); });
+    }
 }
 
 /**
