@@ -83,7 +83,10 @@ TurtleRenderer.prototype.render = function(turtle) {
 
     // Draw background layer
     {
-        ctx.drawImage(this._backgroundLayer, 0, 0);
+        ctx.save();
+        ctx.fillStyle = turtle.backgroundColor;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
     }
 
     // Draw foreground layer
@@ -122,19 +125,6 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
     ctx.stroke();
 }
 
-/**
- * Fills the background with the given color.
- * @param {string} color - A string parsed as a CSS color
- */
-TurtleRenderer.prototype.fillBackground = function(color) {
-    const ctx = this.getBackgroundContext();
-    const width = this._canvasElement.width;
-    const height = this._canvasElement.height;
-
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, width, height);
-}
-
 
 
 /**
@@ -154,7 +144,7 @@ function Turtle() {
     this._orientation = 0;
     this._radians = false;
     this._turtleImage = Turtle.defaultTurtleImage;
-    this._backgroundColor = "#ffffff";
+    this._background = "#ffffff";
 }
 
 Object.defineProperty(Turtle.prototype, 'x', {
@@ -257,14 +247,11 @@ Turtle.prototype.left = function(angle) {
  * @param {Color} color - the background color
  */
 Turtle.prototype.background = function(color) {
+    this._backgroundColor = color;
 
     if (this._renderer) {
-        const renderer = this._renderer;
-        renderer.fillBackground(color);
-        renderer.renderIfNeeded(this);
+        this._renderer.renderIfNeeded(this);
     }
-
-    this._backgroundColor = color;
 }
 
 /** 
