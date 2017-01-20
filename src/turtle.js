@@ -36,6 +36,7 @@ function TurtleRenderer(element) {
     this._foregroundLayer = document.createElement('canvas');
     this._foregroundLayer.width = width;
     this._foregroundLayer.height = height;
+    this.getForegroundContext().lineWidth = .5;
     this.getForegroundContext().transform(1, 0, 0, -1, width/2, height/2);
 }
 
@@ -88,9 +89,9 @@ TurtleRenderer.prototype.render = function(turtle) {
 
         ctx.save();
         ctx.transform(1, 0, 0, -1, width/2, height/2);
-        ctx.translate(turtle.x - img.naturalWidth/2, turtle.y - img.naturalHeight/2);
+        ctx.translate(turtle.x, turtle.y);
         ctx.rotate(turtle.orientation);
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
         ctx.restore();
     }
 }
