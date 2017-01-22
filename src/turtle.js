@@ -31,23 +31,14 @@ function TurtleRenderer(element) {
     this._foregroundLayer = document.createElement('canvas');
     this._foregroundLayer.width = width;
     this._foregroundLayer.height = height;
-    this.getForegroundContext().lineWidth = .5;
-    this.getForegroundContext().transform(1, 0, 0, -1, width/2, height/2);
+    this._foregroundContext = this._foregroundLayer.getContext('2d', {alpha:'true'});
+    this._foregroundContext.lineWidth = .5;
+    this._foregroundContext.transform(1, 0, 0, -1, width/2, height/2);
 }
 
 Object.defineProperty(TurtleRenderer.prototype, 'canvasElement', {
     get: function() { return this._canvasElement; }
 });
-
-/**
- * Returns the context to draw the foreground on. This context is not directly linked to
- * an on-screen canvas. Use [render]{@linkcode TurtleRenderer#render} to render
- * to the document's canvas.
- * @return {CanvasRenderingContext2D} the context to draw the foreground on.
- */
-TurtleRenderer.prototype.getForegroundContext = function() {
-    return this._foregroundLayer.getContext('2d', {alpha:'true'});
-}
 
 TurtleRenderer.prototype.renderIfNeeded = function(turtle) {
     if (!this._dirty) {
@@ -107,13 +98,22 @@ TurtleRenderer.prototype.render = function(turtle) {
  * @param {Number} color - The color of the line
  */
 TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1, color) {
-    const ctx = this.getForegroundContext();
+    const ctx = this._foregroundContext;
 
     ctx.strokeStyle = color;
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.lineTo(x1, y1);
     ctx.stroke();
+}
+
+/**
+ * Clears the current context.
+ */
+TurtleRenderer.prototype.clear = function() {
+    const ctx = this._foregroundContext;
+
+    ctx.clearRect(-this._canvasElement.width/2, -this._canvasElement.height/2, this._canvasElement.width, this._canvasElement.height);
 }
 
 
@@ -321,6 +321,17 @@ Turtle.prototype.penUp = function() {
 Turtle.prototype.home = function() {
     this._orientation = 0;
     this._moveTo(0, 0);
+}
+
+/**
+ * Clears the drawing
+ */
+Turtle.prototype.clear = function() {
+    if (this._renderer) {
+        const renderer = this._renderer;
+        renderer.clear();
+        renderer.renderIfNeeded(this);
+    }
 }
 
 /**
