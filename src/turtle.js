@@ -83,7 +83,7 @@ TurtleRenderer.prototype.render = function(turtle) {
 
     // Draw turtle
     {
-        if (turtle.show) {
+        if (turtle.visible) {
             const img = turtle.turtleImage;
 
             ctx.save();
@@ -122,7 +122,8 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
  * @property {Number} x - The current x coordinate of the turtle.
  * @property {Number} y - The current y coordinate of the turtle.
  * @property {Number} orientation - The current angle the turtle is heading.
- * @property {boolean} show - If `true` the turtle is visible, hidden if `false`.
+ * @property {boolean} penDown - 
+ * @property {boolean} visible - If `true` the turtle is visible, hidden if `false`.
  * @property {boolean} radians - `true` if the orientation units are in radians, in degrees if `false`. Defaults to `false`.
  * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
  * @property {Object} turtleImage - (write-only) The image used to represent the turtle.
@@ -133,7 +134,7 @@ function Turtle() {
     this._y = 0;
     this._orientation = 0;
     this._radians = false;
-    this._show = true;
+    this._visible = true;
     this._turtleImage = Turtle.defaultTurtleImage;
     this._backgroundColor = "#ffffff";
 }
@@ -153,8 +154,8 @@ Object.defineProperty(Turtle.prototype, 'orientation', {
         }
     }
 });
-Object.defineProperty(Turtle.prototype, 'show', {
-    get: function() { return this._show; }
+Object.defineProperty(Turtle.prototype, 'visible', {
+    get: function() { return this._visible; }
 });
 Object.defineProperty(Turtle.prototype, 'radians', {
     get: function() { return this._radians; },
@@ -260,7 +261,7 @@ Turtle.prototype.background = function(color) {
  * Hides the turtle. When the turtle is hidden, it cannot be seen yet it will still draw onto the context.
  */
 Turtle.prototype.hide = function() {
-    this._show = false;
+    this._visible = false;
 
     if (this._renderer) {
         this._renderer.renderIfNeeded(this);
@@ -271,7 +272,7 @@ Turtle.prototype.hide = function() {
  * Shows the turtle. The turtle will be drawn onto the context.
  */
 Turtle.prototype.show = function() {
-    this._show = true;
+    this._visible = true;
 
     if (this._renderer) {
         this._renderer.renderIfNeeded(this);
