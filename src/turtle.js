@@ -300,6 +300,14 @@ Turtle.prototype.penUp = function() {
     this._isPenDown = false;
 }
 
+/**
+ * Returns the turtle to the origin. If the pen is down, the turtle will draw a line from its current position.
+ */
+ Turtle.prototype.home = function() {
+    this._orientation = 0;
+    this._moveTo(0, 0);
+ }
+
 /** 
  * Aliases
  */
