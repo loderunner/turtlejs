@@ -335,49 +335,49 @@ Turtle.prototype.penUp = function() {
 Turtle.prototype.fd = Turtle.prototype.forward;
 /**
  * Alias of [back]{@linkcode Turtle#back}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.bk
  * @param distance
  */
 Turtle.prototype.bk = Turtle.prototype.back;
 /**
  * Alias of [left]{@linkcode Turtle#left}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.lt
  * @param distance
  */
 Turtle.prototype.lt = Turtle.prototype.left;
 /**
  * Alias of [right]{@linkcode Turtle#right}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.rt
  * @param distance
  */
 Turtle.prototype.rt = Turtle.prototype.right;
 /**
  * Alias of [background]{@linkcode Turtle#background}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.bg
  * @param distance
  */
 Turtle.prototype.bg = Turtle.prototype.background;
 /**
  * Alias of [show]{@linkcode Turtle#show}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.st
  * @param distance
  */
 Turtle.prototype.st = Turtle.prototype.show;
 /**
  * Alias of [hide]{@linkcode Turtle#hide}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.ht
  * @param distance
  */
 Turtle.prototype.ht = Turtle.prototype.hide;
 /**
  * Alias of [penUp]{@linkcode Turtle#penUp}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.pu
  * @param distance
  */
 Turtle.prototype.pu = Turtle.prototype.penUp;
 /**
  * Alias of [penDown]{@linkcode Turtle#penDown}
- * @function Turtle.prototype.fd
+ * @function Turtle.prototype.pd
  * @param distance
  */
 Turtle.prototype.pd = Turtle.prototype.penDown;
