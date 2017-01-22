@@ -122,7 +122,7 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
  * @property {Number} x - The current x coordinate of the turtle.
  * @property {Number} y - The current y coordinate of the turtle.
  * @property {Number} orientation - The current angle the turtle is heading.
- * @property {boolean} penDown - 
+ * @property {boolean} isPenDown - `true` when the pen is "down".
  * @property {boolean} visible - If `true` the turtle is visible, hidden if `false`.
  * @property {boolean} radians - `true` if the orientation units are in radians, in degrees if `false`. Defaults to `false`.
  * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
@@ -134,6 +134,7 @@ function Turtle() {
     this._y = 0;
     this._orientation = 0;
     this._radians = false;
+    this._isPenDown = true;
     this._visible = true;
     this._turtleImage = Turtle.defaultTurtleImage;
     this._backgroundColor = "#ffffff";
@@ -153,6 +154,9 @@ Object.defineProperty(Turtle.prototype, 'orientation', {
             return 180 * this._orientation / Math.PI;
         }
     }
+});
+Object.defineProperty(Turtle.prototype, 'isPenDown', {
+    get: function() { return this._isPenDown; }
 });
 Object.defineProperty(Turtle.prototype, 'visible', {
     get: function() { return this._visible; }
@@ -177,15 +181,18 @@ Turtle.defaultTurtleImage = new Image();
 Turtle.defaultTurtleImage.src = 'data:image/png;base64,' + defaultTurtleImageData;
 
 /**
+ * @private
  * Moves the turtle to an (absolute) position.
  * @param {Number} x - the x coordinate of the target position
  * @param {Number} y - the y coordinate of the target position
  */
-Turtle.prototype.moveTo = function(x, y) {
+Turtle.prototype._moveTo = function(x, y) {
 
     if (this._renderer) {
         const renderer = this._renderer;
-        renderer.drawLine(this._x, this._y, x, y);
+        if (this.isPenDown) {
+            renderer.drawLine(this._x, this._y, x, y);
+        }
         renderer.renderIfNeeded(this);
     }
 
@@ -200,7 +207,7 @@ Turtle.prototype.moveTo = function(x, y) {
 Turtle.prototype.forward = function(distance) {
     const x = this._x + distance * Math.cos(this._orientation);
     const y = this._y + distance * Math.sin(this._orientation);
-    this.moveTo(x, y);
+    this._moveTo(x, y);
 }
 
 /**
@@ -210,7 +217,7 @@ Turtle.prototype.forward = function(distance) {
 Turtle.prototype.back = function(distance) {
     const x = this._x - distance * Math.cos(this._orientation);
     const y = this._y - distance * Math.sin(this._orientation);
-    this.moveTo(x, y);
+    this._moveTo(x, y);
 }
 
 /**
@@ -279,6 +286,20 @@ Turtle.prototype.show = function() {
     }
 }
 
+/**
+ * Puts the pen down. When the pen is down, the turtle draws when it moves.
+ */
+Turtle.prototype.penDown = function() {
+    this._isPenDown = true;
+}
+
+/**
+ * Puts the pen up. When the pen is "up", the turtle moves without drawing.
+ */
+Turtle.prototype.penUp = function() {
+    this._isPenDown = false;
+}
+
 /** 
  * Aliases
  */
@@ -325,6 +346,18 @@ Turtle.prototype.st = Turtle.prototype.show;
  * @param distance
  */
 Turtle.prototype.ht = Turtle.prototype.hide;
+/**
+ * Alias of [penUp]{@linkcode Turtle#penUp}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.pu = Turtle.prototype.penUp;
+/**
+ * Alias of [penDown]{@linkcode Turtle#penDown}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.pd = Turtle.prototype.penDown;
 
 /**
  * Creates and returns a turtle drawing context that renders on the given HTMLCanvasElement or id.
