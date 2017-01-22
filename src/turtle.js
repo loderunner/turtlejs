@@ -318,10 +318,26 @@ Turtle.prototype.penUp = function() {
 /**
  * Returns the turtle to the origin. If the pen is down, the turtle will draw a line from its current position.
  */
- Turtle.prototype.home = function() {
+Turtle.prototype.home = function() {
     this._orientation = 0;
     this._moveTo(0, 0);
- }
+}
+
+/**
+ * Runs the `actions` function `n` times. This is essentially a glorified `for` loop, a throwback to Logo.
+ * @param {Number} n - The number of times `actions` is run
+ * @param {function} actions - A function with the actions to repeat
+ * @example <caption>Draw a square using repeat.</caption>
+ * turtle.repeat(4, () => {
+ *     turtle.forward(50);
+ *     turtle.left(90);  
+ * });
+ */
+Turtle.prototype.repeat = function(n, actions) {
+    for (var i = 0; i < n; i++) {
+        actions();
+    }
+}
 
 /** 
  * Aliases
