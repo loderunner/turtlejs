@@ -104,10 +104,12 @@ TurtleRenderer.prototype.render = function(turtle) {
  * @param {Number} x0 - The y coordinate of the start point
  * @param {Number} x1 - The x coordinate of the end point
  * @param {Number} x1 - The y coordinate of the end point
+ * @param {Number} color - The color of the line
  */
-TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
+TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1, color) {
     const ctx = this.getForegroundContext();
 
+    ctx.strokeStyle = color;
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.lineTo(x1, y1);
@@ -125,6 +127,7 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
  * @property {boolean} isPenDown - `true` when the pen is "down".
  * @property {boolean} visible - If `true` the turtle is visible, hidden if `false`.
  * @property {boolean} radians - `true` if the orientation units are in radians, in degrees if `false`. Defaults to `false`.
+ * @property {string} penColor - The color of the pen, ie. the color the turtle draws new lines with. Value is a CSS color returned as a string.
  * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
  * @property {Object} turtleImage - (write-only) The image used to represent the turtle.
  * type can be any type accepted by CanvasRenderingContext2D.drawImage
@@ -138,6 +141,7 @@ function Turtle() {
     this._visible = true;
     this._turtleImage = Turtle.defaultTurtleImage;
     this._backgroundColor = "#ffffff";
+    this._penColor = "#000000";
 }
 
 Object.defineProperty(Turtle.prototype, 'x', {
@@ -165,6 +169,9 @@ Object.defineProperty(Turtle.prototype, 'radians', {
     get: function() { return this._radians; },
     set: function(r) { this._radians = r; }
 });
+Object.defineProperty(Turtle.prototype, 'penColor', {
+    get: function() { return this._penColor; }
+});
 Object.defineProperty(Turtle.prototype, 'backgroundColor', {
     get: function() { return this._backgroundColor; }
 });
@@ -181,8 +188,8 @@ Turtle.defaultTurtleImage = new Image();
 Turtle.defaultTurtleImage.src = 'data:image/png;base64,' + defaultTurtleImageData;
 
 /**
- * @private
  * Moves the turtle to an (absolute) position.
+ * @private
  * @param {Number} x - the x coordinate of the target position
  * @param {Number} y - the y coordinate of the target position
  */
@@ -191,7 +198,7 @@ Turtle.prototype._moveTo = function(x, y) {
     if (this._renderer) {
         const renderer = this._renderer;
         if (this.isPenDown) {
-            renderer.drawLine(this._x, this._y, x, y);
+            renderer.drawLine(this._x, this._y, x, y, this._penColor);
         }
         renderer.renderIfNeeded(this);
     }
@@ -262,6 +269,14 @@ Turtle.prototype.background = function(color) {
     if (this._renderer) {
         this._renderer.renderIfNeeded(this);
     }
+}
+
+/**
+ * Sets the pen color.
+ * @param {Color} color - the pen color
+ */
+Turtle.prototype.color = function(color) {
+    this._penColor = color;
 }
 
 /**
