@@ -76,7 +76,9 @@ TurtleRenderer.prototype.render = function(turtle) {
 
     // Draw foreground layer
     {
+        ctx.save();
         ctx.drawImage(this._foregroundLayer, 0, 0);
+        ctx.restore();
     }
 
     // Draw turtle
@@ -203,6 +205,10 @@ Turtle.prototype.backward = function(distance) {
     this.moveTo(x, y);
 }
 
+/**
+ * Turns the turtle clockwise by `angle`. `angle` is measured in degrees, unless {@linkcode radians} is `true`.
+ * @param {Number} angle - the amount the turtle orientation changes clockwise
+ */
 Turtle.prototype.right = function(angle) {
     if (this._radians) {
         this._orientation -= angle;
@@ -215,6 +221,10 @@ Turtle.prototype.right = function(angle) {
     }
 }
 
+/**
+ * Turns the turtle counterclockwise by `angle`. `angle` is measured in degrees, unless {@linkcode radians} is `true`.
+ * @param {Number} angle - the amount the turtle orientation changes counterclockwise
+ */
 Turtle.prototype.left = function(angle) {
     if (this._radians) {
         this._orientation += angle;
