@@ -83,14 +83,16 @@ TurtleRenderer.prototype.render = function(turtle) {
 
     // Draw turtle
     {
-        const img = turtle.turtleImage;
+        if (turtle.show) {
+            const img = turtle.turtleImage;
 
-        ctx.save();
-        ctx.transform(1, 0, 0, -1, width/2, height/2);
-        ctx.translate(turtle.x, turtle.y);
-        ctx.rotate(turtle._orientation);
-        ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
-        ctx.restore();
+            ctx.save();
+            ctx.transform(1, 0, 0, -1, width/2, height/2);
+            ctx.translate(turtle.x, turtle.y);
+            ctx.rotate(turtle._orientation);
+            ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
+            ctx.restore();
+        }
     }
 
     this._dirty = false;
@@ -120,9 +122,10 @@ TurtleRenderer.prototype.drawLine = function(x0, y0, x1, y1) {
  * @property {Number} x - The current x coordinate of the turtle.
  * @property {Number} y - The current y coordinate of the turtle.
  * @property {Number} orientation - The current angle the turtle is heading.
+ * @property {boolean} show - If `true` the turtle is visible, hidden if `false`.
  * @property {boolean} radians - `true` if the orientation units are in radians, in degrees if `false`. Defaults to `false`.
  * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
- * @property {Object} turtleImage - (write-only) The image used to represent the turtle. The
+ * @property {Object} turtleImage - (write-only) The image used to represent the turtle.
  * type can be any type accepted by CanvasRenderingContext2D.drawImage
  */ 
 function Turtle() {
@@ -130,6 +133,7 @@ function Turtle() {
     this._y = 0;
     this._orientation = 0;
     this._radians = false;
+    this._show = true;
     this._turtleImage = Turtle.defaultTurtleImage;
     this._backgroundColor = "#ffffff";
 }
@@ -148,6 +152,9 @@ Object.defineProperty(Turtle.prototype, 'orientation', {
             return 180 * this._orientation / Math.PI;
         }
     }
+});
+Object.defineProperty(Turtle.prototype, 'show', {
+    get: function() { return this._show; }
 });
 Object.defineProperty(Turtle.prototype, 'radians', {
     get: function() { return this._radians; },
@@ -199,7 +206,7 @@ Turtle.prototype.forward = function(distance) {
  * Moves the turtle backwards from the direction it's headed. This does not change the turtle's orientation.
  * @param {Number} distance - the distance the turtle should move backwards
  */
-Turtle.prototype.backward = function(distance) {
+Turtle.prototype.back = function(distance) {
     const x = this._x - distance * Math.cos(this._orientation);
     const y = this._y - distance * Math.sin(this._orientation);
     this.moveTo(x, y);
@@ -249,6 +256,28 @@ Turtle.prototype.background = function(color) {
     }
 }
 
+/**
+ * Hides the turtle. When the turtle is hidden, it cannot be seen yet it will still draw onto the context.
+ */
+Turtle.prototype.hide = function() {
+    this._show = false;
+
+    if (this._renderer) {
+        this._renderer.renderIfNeeded(this);
+    }
+}
+
+/**
+ * Shows the turtle. The turtle will be drawn onto the context.
+ */
+Turtle.prototype.show = function() {
+    this._show = true;
+
+    if (this._renderer) {
+        this._renderer.renderIfNeeded(this);
+    }
+}
+
 /** 
  * Aliases
  */
@@ -259,6 +288,42 @@ Turtle.prototype.background = function(color) {
  * @param distance
  */
 Turtle.prototype.fd = Turtle.prototype.forward;
+/**
+ * Alias of [back]{@linkcode Turtle#back}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.bk = Turtle.prototype.back;
+/**
+ * Alias of [left]{@linkcode Turtle#left}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.lt = Turtle.prototype.left;
+/**
+ * Alias of [right]{@linkcode Turtle#right}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.rt = Turtle.prototype.right;
+/**
+ * Alias of [background]{@linkcode Turtle#background}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.bg = Turtle.prototype.background;
+/**
+ * Alias of [show]{@linkcode Turtle#show}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.st = Turtle.prototype.show;
+/**
+ * Alias of [hide]{@linkcode Turtle#hide}
+ * @function Turtle.prototype.fd
+ * @param distance
+ */
+Turtle.prototype.ht = Turtle.prototype.hide;
 
 /**
  * Creates and returns a turtle drawing context that renders on the given HTMLCanvasElement or id.
