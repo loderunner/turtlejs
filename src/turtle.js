@@ -178,7 +178,7 @@ Object.defineProperty(Turtle.prototype, 'radians', {
 });
 Object.defineProperty(Turtle.prototype, 'speed', {
     get: function() { return this._speed; },
-    set: function(s) { this._speed = speed; }
+    set: function(s) { this._speed = s; }
 });
 Object.defineProperty(Turtle.prototype, 'penColor', {
     get: function() { return this._penColor; }
@@ -222,7 +222,7 @@ Turtle.prototype._turnTo = function(orientation) {
 }
 
 Turtle.prototype._animate = function() {
-    var distance = 0;
+    var distance = (this._speed == 0) ? -Infinity : 0;
     while (this._animations.length > 0) {
         const animation = this._animations.shift();
         if ('x' in animation && 'y' in animation) {
