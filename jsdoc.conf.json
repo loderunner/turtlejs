@@ -1,6 +1,6 @@
 {
     "opts": {
-        "template": "./node_modules/ink-docstrap/template",
+        "template": "./node_modules/docdash",
         "destination": "doc",
         "recurse": true
     },
@@ -11,18 +11,7 @@
         "plugins/markdown",
         "plugins/summarize"
     ],
-    "templates": {
-        "systemName"            : "Turtle.js",
-        "footer"                : "",
-        "copyright"             : "",
-        "includeDate"           : true,
-        "navType"               : "vertical",
-        "theme"                 : "flatly",
-        "linenums"              : false,
-        "collapseSymbols"       : false,
-        "inverseNav"            : false,
-        "outputSourceFiles"     : false,
-        "outputSourcePath"      : false,
-        "sort"                  : false
+    "docdash" : {
+        "static" : true
     }
 }

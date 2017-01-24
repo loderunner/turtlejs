@@ -79,8 +79,8 @@ TurtleRenderer.prototype.render = function(turtle) {
 
             ctx.save();
             ctx.transform(1, 0, 0, -1, width/2, height/2);
-            ctx.translate(turtle.x, turtle.y);
-            ctx.rotate(turtle._orientation);
+            ctx.translate(turtle._animateX, turtle._animateY);
+            ctx.rotate(turtle._animateOrientation);
             ctx.drawImage(img, -img.naturalWidth/2, -img.naturalHeight/2);
             ctx.restore();
         }
@@ -127,6 +127,7 @@ TurtleRenderer.prototype.clear = function() {
  * @property {boolean} isPenDown - `true` when the pen is "down".
  * @property {boolean} visible - If `true` the turtle is visible, hidden if `false`.
  * @property {boolean} radians - `true` if the orientation units are in radians, in degrees if `false`. Defaults to `false`.
+ * @property {Number} speed - The larger the `speed`, the faster the turtle travels on the canvas. If `speed` is `0`, the turtle is not animated. Defaults to 3.
  * @property {string} penColor - The color of the pen, ie. the color the turtle draws new lines with. Value is a CSS color returned as a string.
  * @property {string} backgroundColor - The color of the background. Value is a CSS color returned as a string.
  * @property {Object} turtleImage - (write-only) The image used to represent the turtle.
@@ -142,20 +143,26 @@ function Turtle() {
     this._turtleImage = Turtle.defaultTurtleImage;
     this._backgroundColor = "#ffffff";
     this._penColor = "#000000";
+    this._speed = 3;
+
+    this._animateX = 0;
+    this._animateY = 0;
+    this._animateOrientation = 0;
+    this._animations = [];
 }
 
 Object.defineProperty(Turtle.prototype, 'x', {
-    get: function() { return this._x; }
+    get: function() { return this._animateX; }
 });
 Object.defineProperty(Turtle.prototype, 'y', {
-    get: function() { return this._y; }
+    get: function() { return this._animateY; }
 });
 Object.defineProperty(Turtle.prototype, 'orientation', {
     get: function() { 
         if (this._radians) {
-            return this._orientation;
+            return this._animateOrientation;
         } else {
-            return 180 * this._orientation / Math.PI;
+            return 180 * this._animateOrientation / Math.PI;
         }
     }
 });
@@ -168,6 +175,10 @@ Object.defineProperty(Turtle.prototype, 'visible', {
 Object.defineProperty(Turtle.prototype, 'radians', {
     get: function() { return this._radians; },
     set: function(r) { this._radians = r; }
+});
+Object.defineProperty(Turtle.prototype, 'speed', {
+    get: function() { return this._speed; },
+    set: function(s) { this._speed = speed; }
 });
 Object.defineProperty(Turtle.prototype, 'penColor', {
     get: function() { return this._penColor; }
@@ -188,23 +199,74 @@ Turtle.defaultTurtleImage = new Image();
 Turtle.defaultTurtleImage.src = 'data:image/png;base64,' + defaultTurtleImageData;
 
 /**
- * Moves the turtle to an (absolute) position.
+ * Animates the turtle to an (absolute) position.
  * @private
  * @param {Number} x - the x coordinate of the target position
  * @param {Number} y - the y coordinate of the target position
  */
 Turtle.prototype._moveTo = function(x, y) {
+    if (this._animations.length === 0) {
+        requestAnimationFrame(this._animate.bind(this));
+    }
+    this._animations.push({ 'x' : x, 'y' : y});
+    this._x = x;
+    this._y = y;
+}
 
+Turtle.prototype._turnTo = function(orientation) {
+    if (this._animations.length === 0) {
+        requestAnimationFrame(this._animate.bind(this));
+    }
+    this._animations.push({ 'orientation' : orientation});
+    this._orientation = orientation;
+}
+
+Turtle.prototype._animate = function() {
+    var distance = 0;
+    while (this._animations.length > 0) {
+        const animation = this._animations.shift();
+        if ('x' in animation && 'y' in animation) {
+            const move = animation;
+            const moveDistance = Math.sqrt((this._animateX - move.x) * (this._animateX - move.x) + (this._animateY - move.y) * (this._animateY - move.y));
+            if (distance + moveDistance < this._speed) {
+                this._doMoveTo(move.x, move.y);
+                distance += moveDistance;
+            } else {
+                const animateDistance = this._speed - distance;
+                const animateX = this._animateX + (move.x - this._animateX) * animateDistance / moveDistance;
+                const animateY = this._animateY + (move.y - this._animateY) * animateDistance / moveDistance;
+                this._doMoveTo(animateX, animateY);
+                this._animations.unshift({ 'x' : move.x, 'y' : move.y});
+                requestAnimationFrame(this._animate.bind(this));
+                break;
+            }
+        } else if ('orientation' in animation) {
+            const turn = animation;
+            this._doTurnTo(animation.orientation);
+        }
+    }
+}
+
+Turtle.prototype._doMoveTo = function(x, y) {
     if (this._renderer) {
         const renderer = this._renderer;
         if (this.isPenDown) {
-            renderer.drawLine(this._x, this._y, x, y, this._penColor);
+            renderer.drawLine(this._animateX, this._animateY, x, y, this._penColor);
         }
         renderer.renderIfNeeded(this);
     }
 
-    this._x = x;
-    this._y = y;
+    this._animateX = x;
+    this._animateY = y;
+}
+
+Turtle.prototype._doTurnTo = function(orientation) {
+    if (this._renderer) {
+        const renderer = this._renderer;
+        renderer.renderIfNeeded(this);
+    }
+
+    this._animateOrientation = orientation;
 }
 
 /**
@@ -233,13 +295,9 @@ Turtle.prototype.back = function(distance) {
  */
 Turtle.prototype.right = function(angle) {
     if (this._radians) {
-        this._orientation -= angle;
+        this._turnTo(this._orientation - angle);
     } else {
-        this._orientation -= angle * Math.PI / 180;
-    }
-
-    if (this._renderer) {
-        this._renderer.renderIfNeeded(this);
+        this._turnTo(this._orientation - angle * Math.PI / 180);
     }
 }
 
@@ -249,13 +307,9 @@ Turtle.prototype.right = function(angle) {
  */
 Turtle.prototype.left = function(angle) {
     if (this._radians) {
-        this._orientation += angle;
+        this._turnTo(this._orientation + angle);
     } else {
-        this._orientation += angle * Math.PI / 180;
-    }
-    
-    if (this._renderer) {
-        this._renderer.renderIfNeeded(this);
+        this._turnTo(this._orientation + angle * Math.PI / 180);
     }
 }
 
@@ -319,8 +373,8 @@ Turtle.prototype.penUp = function() {
  * Returns the turtle to the origin. If the pen is down, the turtle will draw a line from its current position.
  */
 Turtle.prototype.home = function() {
-    this._orientation = 0;
     this._moveTo(0, 0);
+    this._turnTo(0);
 }
 
 /**

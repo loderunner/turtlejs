@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/loderunner/turtlejs#readme",
   "devDependencies": {
+    "docdash": "^0.4.0",
     "ink-docstrap": "^1.3.0",
     "jsdoc": "^3.4.3"
   }
