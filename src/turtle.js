@@ -237,13 +237,25 @@ Turtle.prototype._animate = function() {
                 const animateY = this._animateY + (move.y - this._animateY) * animateDistance / moveDistance;
                 this._doMoveTo(animateX, animateY);
                 this._animations.unshift({ 'x' : move.x, 'y' : move.y});
-                requestAnimationFrame(this._animate.bind(this));
                 break;
             }
         } else if ('orientation' in animation) {
             const turn = animation;
-            this._doTurnTo(animation.orientation);
+            const turnDistance = Math.abs(this._animateOrientation - turn.orientation) * 20;
+            if (distance + turnDistance < this._speed) {
+                this._doTurnTo(animation.orientation);
+                distance += turnDistance;
+            } else {
+                const animateDistance = this._speed - distance;
+                const animateOrientation = this._animateOrientation + (turn.orientation - this._animateOrientation) * animateDistance / turnDistance;
+                this._doTurnTo(animateOrientation);
+                this._animations.unshift({ 'orientation' : turn.orientation });
+                break;
+            }
         }
+    }
+    if (this._animations.length > 0) {
+        requestAnimationFrame(this._animate.bind(this));
     }
 }
 
